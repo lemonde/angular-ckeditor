@@ -24,11 +24,8 @@ module.exports = function (config) {
         served: true
       },
 
-      'node_modules/sinon/pkg/sinon.js',
       'node_modules/lodash/dist/lodash.js',
       'node_modules/chai/chai.js',
-      'node_modules/chai-jquery/chai-jquery.js',
-      'node_modules/sinon-chai/lib/sinon-chai.js',
       'node_modules/chai-jquery/chai-jquery.js',
 
       'angular-ckeditor.js',

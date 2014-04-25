@@ -11,6 +11,11 @@
   .module('ckeditor', [])
   .directive('ckeditor', ['$parse', ckeditorDirective]);
 
+  // Create setImmediate function.
+  var setImmediate = window && window.setImmediate ? window.setImmediate : function (fn) {
+    setTimeout(fn, 0);
+  };
+
   /**
    * CKEditor directive.
    *
@@ -21,82 +26,102 @@
   function ckeditorDirective($parse) {
     return {
       restrict: 'A',
-      require: ['ngModel'],
+      require: ['ckeditor', 'ngModel'],
+      controller: ['$scope', '$element', '$attrs', '$parse', '$q', ckeditorController],
       link: function (scope, element, attrs, ctrls) {
-        var ngModel = ctrls[0];
-        var readyHandler = $parse(attrs.ready);
-        var config = $parse(attrs.ckeditor)(scope);
-        var instance = CKEDITOR.inline(element[0], config || {});
-        var ready = instance.status === 'ready';
-        var buffer = null;
+        var ckeditor = ctrls[0];
+        var ngModel = ctrls[1];
 
-        // Handle ready event.
-        if (ready) onReady();
-        else instance.on('instanceReady', function () {
-          scope.$apply(onReady);
-        });
-
-        function onReady() {
-          ready = true;
-
-          // Put editor out of readonly.
-          instance.setReadOnly(false);
-
-          // Set the view data.
-          setEditorData(buffer);
-
+        // Initialize the editor when it is ready.
+        ckeditor.ready().then(function initialize() {
           // Sync view on specific events.
           ['dataReady', 'change', 'saveSnapshot'].forEach(function (event) {
-            instance.on(event, function () {
-              // Force events to be asynchrone.
-              setTimeout(function () {
-                scope.$apply(syncView);
-              }, 0);
+            ckeditor.$on(event, function syncView() {
+              ngModel.$setViewValue(ckeditor.instance.getData());
             });
           });
 
-          // Call external ready handler in a setTimeout to ensure
-          // that it's done after the complete ngModel initialization.
-          setTimeout(function () {
-            readyHandler(scope);
-          }, 0);
-        }
+          // Put editor out of readonly.
+          ckeditor.instance.setReadOnly(false);
 
-        // Destroy editor on destroy.
-        scope.$on('$destroy', function onDestroy() {
-          instance.destroy(false);
+          // Defer the ready handler calling to ensure that the editor is
+          // completely ready and populated with data.
+          setImmediate(function () {
+            $parse(attrs.ready)(scope);
+          });
         });
 
         // Set editor data when view data change.
-        ngModel.$render = syncEditor;
-
-        /**
-         * Sync the editor.
-         */
-
-        function syncEditor() {
-          if (ready) setEditorData(ngModel.$viewValue);
-          else buffer = ngModel.$viewValue;
-        }
-
-        /**
-         * Sync the view.
-         */
-
-        function syncView() {
-          ngModel.$setViewValue(instance.getData());
-        }
-
-        /**
-         * Set editor data.
-         *
-         * @param {String} data
-         */
-
-        function setEditorData(data) {
-          instance.setData(data);
-        }
+        ngModel.$render = function syncEditor() {
+          ckeditor.ready().then(function () {
+            ckeditor.instance.setData(ngModel.$viewValue);
+          });
+        };
       }
     };
+  }
+
+  /**
+   * CKEditor controller.
+   */
+
+  function ckeditorController($scope, $element, $attrs, $parse, $q) {
+    // Create editor instance.
+    var config = $parse($attrs.ckeditor)($scope) || {};
+    var instance = this.instance = CKEDITOR.inline($element[0], config);
+
+    /**
+     * Listen on events of a given type.
+     * This make all event asynchrone and wrapped in $scope.$apply.
+     *
+     * @param {String} event
+     * @param {Function} listener
+     * @returns {Function} Deregistration function for this listener.
+     */
+
+    this.$on = function $on(event, listener) {
+      // Wrap primus event with $rootScope.$apply.
+      instance.on(event, asyncListener);
+
+      function asyncListener() {
+        var args = arguments;
+        setImmediate(function () {
+          applyListener.apply(null, args);
+        });
+      }
+
+      function applyListener() {
+        var args = arguments;
+        $scope.$apply(function () {
+          listener.apply(null, args);
+        });
+      }
+
+      // Return the deregistration function
+      return function $off() {
+        instance.removeListener(event, applyListener);
+      };
+    };
+
+    /**
+     * Check if the editor if ready.
+     *
+     * @returns {Promise}
+     */
+
+    this.ready = function ready() {
+      if (this.readyDefer) return this.readyDefer.promise;
+
+      var readyDefer = this.readyDefer = $q.defer();
+      if (this.instance.status === 'ready') readyDefer.resolve();
+      else this.$on('instanceReady', readyDefer.resolve);
+
+      return readyDefer.promise;
+    };
+
+    // Destroy editor when the scope is destroyed.
+    $scope.$on('$destroy', function onDestroy() {
+      instance.destroy(false);
+    });
   }
 }));
