@@ -8,6 +8,7 @@ describe('CKEditor directive', function () {
   beforeEach(inject(function ($injector) {
     $compile = $injector.get('$compile');
     $rootScope = $injector.get('$rootScope');
+    $document = $injector.get('$document');
     scope = $rootScope.$new();
   }));
 
@@ -18,11 +19,11 @@ describe('CKEditor directive', function () {
 
   it('should create a new editor', function (done) {
     scope.onReady = function () {
-      expect(element).to.have.attr('contenteditable');
+      expect(_.find(CKEDITOR.instances)).to.exist;
       done();
     };
 
-    var element = $compile('<div ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
   });
 
   it('should put editor out of readonly mode when ready', function (done) {
@@ -31,7 +32,7 @@ describe('CKEditor directive', function () {
       done();
     };
 
-    var element = $compile('<div ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
   });
 
   it('should destroy instance on scope destroy', function (done) {
@@ -41,7 +42,7 @@ describe('CKEditor directive', function () {
       done();
     };
 
-    var element = $compile('<div ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
     expect(_.size(CKEDITOR.instances)).to.equal(1);
   });
 
@@ -56,7 +57,7 @@ describe('CKEditor directive', function () {
       }, 0);
     };
 
-    var element = $compile('<div ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
   });
 
   it('should synchronize editor to the view', function (done) {
@@ -68,6 +69,27 @@ describe('CKEditor directive', function () {
       }, 0);
     };
 
-    var element = $compile('<div ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
   });
+
+  it('should create an inline editor', function (done) {
+    scope.onReady = function () {
+      expect(_.find(CKEDITOR.instances).editable().isInline()).to.be.true;
+      done();
+    };
+
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+  });
+
+  it('should create a non-inline editor', function (done) {
+    scope.onReady = function() {
+      expect(_.find(CKEDITOR.instances).editable().isInline()).to.be.false;
+      done();
+    };
+
+    var element = angular.element('<textarea ckeditor ng-model="test" ready="onReady()"></textarea>');
+    $document.find('body').append(element);
+    $compile(element)(scope);
+  });
+
 });
