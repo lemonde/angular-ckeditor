@@ -35,7 +35,7 @@
         // Initialize the editor when it is ready.
         ckeditor.ready().then(function initialize() {
           // Sync view on specific events.
-          ['dataReady', 'change', 'saveSnapshot'].forEach(function (event) {
+          ['dataReady', 'change', 'blur', 'saveSnapshot'].forEach(function (event) {
             ckeditor.$on(event, function syncView() {
               ngModel.$setViewValue(ckeditor.instance.getData());
             });
