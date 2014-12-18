@@ -1,5 +1,3 @@
-/*! Angular CKEditor v0.1.1 | (c) 2014 Le Monde | License MIT */
-
 (function (root, factory) {
   // AMD
   if (typeof define === 'function' && define.amd) define(['angular'], factory);
@@ -27,7 +25,14 @@
     return {
       restrict: 'A',
       require: ['ckeditor', 'ngModel'],
-      controller: ['$scope', '$element', '$attrs', '$parse', '$q', ckeditorController],
+      controller: [
+        '$scope',
+        '$element',
+        '$attrs',
+        '$parse',
+        '$q',
+        ckeditorController
+      ],
       link: function (scope, element, attrs, ctrls) {
         var ckeditor = ctrls[0];
         var ngModel = ctrls[1];
