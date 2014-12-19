@@ -48,6 +48,10 @@ angular.module('controllers.ckeditor', ['ckeditor'])
 });
 ```
 
+**IMPORTANT NOTICE**
+Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom this directive is attached, changes in the editor won't be forwarded to your code anymore, due to the extra scope created by `ng-if`. A solution is to explicitely bypass the extra scope : `ng-model="$parent.model"`. See http://stackoverflow.com/questions/18342917/angularjs-ng-model-doesnt-work-inside-ng-if
+
+
 ### "ckeditor" directive
 
 - "ckeditor" Specify editor options. Accepts an Object.
