@@ -42,7 +42,7 @@
           // Sync view on specific events.
           ['dataReady', 'change', 'saveSnapshot'].forEach(function (event) {
             ckeditor.$on(event, function syncView() {
-              ngModel.$setViewValue(ckeditor.instance.getData());
+              ngModel.$setViewValue(ckeditor.instance.getData() || '');
             });
           });
 
@@ -59,7 +59,7 @@
         // Set editor data when view data change.
         ngModel.$render = function syncEditor() {
           ckeditor.ready().then(function () {
-            ckeditor.instance.setData(ngModel.$viewValue);
+            ckeditor.instance.setData(ngModel.$viewValue || '');
           });
         };
       }
