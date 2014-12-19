@@ -1,7 +1,7 @@
 var expect = chai.expect;
 
 describe('CKEditor directive', function () {
-  var $compile, $rootScope, scope;
+  var $compile, $document, $rootScope, scope;
 
   beforeEach(module('ckeditor'));
 
@@ -50,7 +50,7 @@ describe('CKEditor directive', function () {
     scope.content = 'Hello';
 
     scope.onReady = function () {
-      // We should wait that the editor has setted data.
+      // We should wait for the editor to have set data.
       setTimeout(function () {
         expect(element).to.contain('Hello');
         done();
@@ -63,10 +63,42 @@ describe('CKEditor directive', function () {
   it('should synchronize editor to the view', function (done) {
     scope.onReady = function () {
       _.find(CKEDITOR.instances).setData('<p>Hey</p>');
+
+      // Angular CKEditor may take a few setImmediate() to propagate values,
+      // so wait a small timeout before testing
       setTimeout(function () {
         expect(scope.content).to.equal('<p>Hey</p>');
         done();
-      }, 0);
+      }, 5);
+    };
+
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+  });
+
+  it('should synchronize editor to the view at start', function (done) {
+    scope.onReady = function () {
+      // Angular CKEditor may take a few setImmediate() to propagate values,
+      // so wait a small timeout before testing
+      setTimeout(function () {
+        expect(scope.content).to.equal('<p>at start !</p>');
+        done();
+      }, 5);
+    };
+
+    scope.content = "at start !";
+    var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
+  });
+
+  it('should update model in a watchable way', function (done) {
+    // update in model (cf. below) should be watchable
+    scope.$watch('content', function(newTxt) {
+      if(!newTxt) return;
+      expect(newTxt).to.equal('<p>Hey</p>');
+      done();
+    });
+
+    scope.onReady = function () {
+      _.find(CKEDITOR.instances).setData('<p>Hey</p>');
     };
 
     var element = $compile('<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>')(scope);
