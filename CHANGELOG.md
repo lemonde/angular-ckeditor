@@ -1,4 +1,7 @@
 
+v0.3.2
+- dependencies update
+
 v0.3.1
 - updated minified version
 
