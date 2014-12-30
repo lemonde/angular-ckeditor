@@ -14,6 +14,9 @@ CKEditor directive for Angular.
 bower install angular-ckeditor
 ```
 
+Note : obviously this plugin expects the presence of AngularJS and CKEditor.
+
+
 ## Usage
 
 HTML:
@@ -59,6 +62,20 @@ angular.module('controllers.ckeditor', ['ckeditor'])
 Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom this directive is attached, changes in the editor won't be forwarded to your code anymore, due to the extra scope created by `ng-if`. A solution is to explicitely bypass the extra scope : `ng-model="$parent.model"`. See http://stackoverflow.com/questions/18342917/angularjs-ng-model-doesnt-work-inside-ng-if
 
 
+## See also
+You may find this other directive useful : https://github.com/lemonde/angular-ckeditor-placeholder
+
 ## License
 
 MIT
+
+## Contributing
+* clone repo
+* ensure your editor is decent and pick up the `.editorconfig` and `.jshintrc` files
+* `npm install`
+* `npm test`
+* add tests, add features
+* `grunt` (to generate minified version)
+* send a PR
+
+Thanks !
