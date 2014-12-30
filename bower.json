@@ -23,8 +23,11 @@
     "test"
   ],
   "devDependencies": {
-    "angular-mocks": "~1.2.16",
-    "ckeditor": "#basic/4.3.4",
+    "angular-mocks": "1.3.0-rc.2",
+    "ckeditor": "#full/4.4.2",
     "jquery": "~2.1.0"
+  },
+  "resolutions": {
+    "angular": "1.3.0-rc.2"
   }
 }
