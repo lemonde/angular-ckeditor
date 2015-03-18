@@ -46,8 +46,10 @@
             });
           });
 
-          // Put editor out of readonly.
-          ckeditor.instance.setReadOnly(false);
+          ckeditor.instance.setReadOnly(attrs.readonly === 'true');
+          attrs.$observe('readonly', function (readonly) {
+            ckeditor.instance.setReadOnly(readonly === 'true');
+          });
 
           // Defer the ready handler calling to ensure that the editor is
           // completely ready and populated with data.
