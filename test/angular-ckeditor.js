@@ -157,4 +157,28 @@ describe('CKEditor directive', function () {
     });
   });
 
+  describe('readonly', function () {
+    beforeEach(function (done) {
+      scope.content = 'Hello';
+      scope.onReady = done;
+
+      var element = $compile(
+        '<div contenteditable="true" ckeditor readonly="{{readonly}}" ng-model="content" ready="onReady()"></div>'
+      )(scope);
+    });
+
+    it('should observe the readonly attribute', function () {
+      expect(_.find(CKEDITOR.instances).readOnly).to.be.false;
+
+      scope.readonly = true;
+      scope.$digest();
+
+      expect(_.find(CKEDITOR.instances).readOnly).to.be.true;
+
+      scope.readonly = false;
+      scope.$digest();
+
+      expect(_.find(CKEDITOR.instances).readOnly).to.be.false;
+    });
+  });
 });
