@@ -1,6 +1,6 @@
 {
   "name": "angular-ckeditor",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "CKEditor directive for Angular.",
   "scripts": {
     "install": "bower install",
