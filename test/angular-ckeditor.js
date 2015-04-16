@@ -163,7 +163,7 @@ describe('CKEditor directive', function () {
       scope.onReady = done;
 
       var element = $compile(
-        '<div contenteditable="true" ckeditor readonly="{{readonly}}" ng-model="content" ready="onReady()"></div>'
+        '<div contenteditable="true" ckeditor ng-readonly="readonly" ng-model="content" ready="onReady()"></div>'
       )(scope);
     });
 

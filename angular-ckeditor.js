@@ -46,9 +46,9 @@
             });
           });
 
-          ckeditor.instance.setReadOnly(attrs.readonly === 'true');
+          ckeditor.instance.setReadOnly(!!attrs.readonly);
           attrs.$observe('readonly', function (readonly) {
-            ckeditor.instance.setReadOnly(readonly === 'true');
+            ckeditor.instance.setReadOnly(!!readonly);
           });
 
           // Defer the ready handler calling to ensure that the editor is
