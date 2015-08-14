@@ -35,7 +35,7 @@ JavaScript:
 
 ```js
 angular.module('controllers.ckeditor', ['ckeditor'])
-.controller('CkeditorCtrl', function ($scope) {
+.controller('CkeditorCtrl', ['$scope', function ($scope) {
 
   // Editor options.
   $scope.options = {
@@ -48,7 +48,7 @@ angular.module('controllers.ckeditor', ['ckeditor'])
   $scope.onReady = function () {
     // ...
   };
-});
+}]);
 ```
 
 ### "ckeditor" directive
