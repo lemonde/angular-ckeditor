@@ -12,9 +12,14 @@ describe('CKEditor directive', function () {
     scope = $rootScope.$new();
   }));
 
-  afterEach(function () {
-    // Destroy all CKEditor instances.
-    _.invoke(CKEDITOR.instances, 'destroy');
+  afterEach(function cleanup (done) {
+    scope.$destroy();
+    $rootScope.$digest(); // needed to resolve the ready promise
+    // the cleanup may be async
+    setTimeout(function() {
+      expect(_.keys(CKEDITOR.instances)).to.have.length(0);
+      done();
+    });
   });
 
   describe('lifecycle', function() {
@@ -42,16 +47,24 @@ describe('CKEditor directive', function () {
 
     it('should destroy instance on scope destroy', function (done) {
       scope.onReady = function () {
-        scope.$destroy();
-        expect(_.size(CKEDITOR.instances)).to.equal(0);
         done();
       };
 
       var element = $compile(
         '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
       )(scope);
-      expect(_.size(CKEDITOR.instances)).to.equal(1);
+
+      // this is tested in the afterEach "cleanup" above
     });
+  });
+
+  it('should call the ready callback on start', function (done) {
+    scope.content = 'Hello';
+    scope.onReady = done;
+
+    var element = $compile(
+      '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
+    )(scope);
   });
 
   describe('model sync', function() {

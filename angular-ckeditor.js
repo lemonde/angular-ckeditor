@@ -9,7 +9,7 @@
   .module('ckeditor', [])
   .directive('ckeditor', ['$parse', ckeditorDirective]);
 
-  // Create setImmediate function.
+  // Polyfill setImmediate function.
   var setImmediate = window && window.setImmediate ? window.setImmediate : function (fn) {
     setTimeout(fn, 0);
   };
@@ -34,21 +34,22 @@
         ckeditorController
       ],
       link: function (scope, element, attrs, ctrls) {
-        var ckeditor = ctrls[0];
-        var ngModel = ctrls[1];
+        // get needed controllers
+        var controller = ctrls[0]; // our own, see below
+        var ngModelController = ctrls[1];
 
-        // Initialize the editor when it is ready.
-        ckeditor.ready().then(function initialize() {
+        // Initialize the editor content when it is ready.
+        controller.ready().then(function initialize() {
           // Sync view on specific events.
           ['dataReady', 'change', 'blur', 'saveSnapshot'].forEach(function (event) {
-            ckeditor.$on(event, function syncView() {
-              ngModel.$setViewValue(ckeditor.instance.getData() || '');
+            controller.onCKEvent(event, function syncView() {
+              ngModelController.$setViewValue(controller.instance.getData() || '');
             });
           });
 
-          ckeditor.instance.setReadOnly(!!attrs.readonly);
+          controller.instance.setReadOnly(!! attrs.readonly);
           attrs.$observe('readonly', function (readonly) {
-            ckeditor.instance.setReadOnly(!!readonly);
+            controller.instance.setReadOnly(!! readonly);
           });
 
           // Defer the ready handler calling to ensure that the editor is
@@ -59,9 +60,9 @@
         });
 
         // Set editor data when view data change.
-        ngModel.$render = function syncEditor() {
-          ckeditor.ready().then(function () {
-            ckeditor.instance.setData(ngModel.$viewValue || '');
+        ngModelController.$render = function syncEditor() {
+          controller.ready().then(function () {
+            controller.instance.setData(ngModelController.$viewValue || '');
           });
         };
       }
@@ -73,10 +74,12 @@
    */
 
   function ckeditorController($scope, $element, $attrs, $parse, $q) {
-    // Create editor instance.
     var config = $parse($attrs.ckeditor)($scope) || {};
     var editorElement = $element[0];
     var instance;
+    var readyDeferred = $q.defer(); // a deferred to be resolved when the editor is ready
+
+    // Create editor instance.
     if (editorElement.hasAttribute('contenteditable') &&
         editorElement.getAttribute('contenteditable').toLowerCase() == 'true') {
       instance = this.instance = CKEDITOR.inline(editorElement, config);
@@ -87,15 +90,14 @@
 
     /**
      * Listen on events of a given type.
-     * This make all event asynchrone and wrapped in $scope.$apply.
+     * This make all event asynchronous and wrapped in $scope.$apply.
      *
      * @param {String} event
      * @param {Function} listener
      * @returns {Function} Deregistration function for this listener.
      */
 
-    this.$on = function $on(event, listener) {
-      // Wrap primus event with $rootScope.$apply.
+    this.onCKEvent = function (event, listener) {
       instance.on(event, asyncListener);
 
       function asyncListener() {
@@ -118,25 +120,25 @@
       };
     };
 
+    this.onCKEvent('instanceReady', function() {
+      readyDeferred.resolve(true);
+    });
+
     /**
      * Check if the editor if ready.
      *
      * @returns {Promise}
      */
-
     this.ready = function ready() {
-      if (this.readyDefer) return this.readyDefer.promise;
-
-      var readyDefer = this.readyDefer = $q.defer();
-      if (this.instance.status === 'ready') readyDefer.resolve();
-      else this.$on('instanceReady', readyDefer.resolve);
-
-      return readyDefer.promise;
+      return readyDeferred.promise;
     };
 
     // Destroy editor when the scope is destroyed.
     $scope.$on('$destroy', function onDestroy() {
-      instance.destroy(false);
+      // do not delete too fast or pending events will throw errors
+      readyDeferred.promise.then(function() {
+        instance.destroy(false);
+      });
     });
   }
 }));
