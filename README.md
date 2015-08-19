@@ -24,6 +24,7 @@ HTML:
 ```html
 <!-- Load files. -->
 <script src="angular.js"></script>
+<script src="ckeditor.js"></script>
 <script src="angular-ckeditor.js"></script>
 
 <div ng-controller="CkeditorCtrl">
