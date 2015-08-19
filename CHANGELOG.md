@@ -1,4 +1,8 @@
 
+ v1.0.0
+- added delayed cleanup
+- *API CHANGE* an internal function called by some users, $on(), has been renamed to onCKEvent()
+
 v0.3.2
 - dependencies update
 
