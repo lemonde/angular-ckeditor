@@ -3,6 +3,17 @@
 - added delayed cleanup
 - *API CHANGE* an internal function called by some users, $on(), has been renamed to onCKEvent()
 
+ v0.4.2
+- Forgot build step
+
+v0.4.1
+- WARNING: minimified build is not up to date
+- fix(readonly): doesn't works with ng-readonly
+- also update view value on blur
+
+v0.4.0
+- Allow readonly attribute.
+
 v0.3.2
 - dependencies update
 
