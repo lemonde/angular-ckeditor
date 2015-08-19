@@ -28,6 +28,8 @@ module.exports = function (config) {
       'node_modules/underscore.string/lib/underscore.string.js',
       'node_modules/chai/chai.js',
       'node_modules/chai-jquery/chai-jquery.js',
+      'node_modules/sinon/pkg/sinon.js',
+      'node_modules/sinon-chai/lib/sinon-chai.js',
 
       'angular-ckeditor.js',
       'test/*.js'
