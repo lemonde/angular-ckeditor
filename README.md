@@ -6,6 +6,7 @@
 
 CKEditor directive for Angular.
 
+
 ## Install
 
 ### Using bower
@@ -54,10 +55,10 @@ angular.module('controllers.ckeditor', ['ckeditor'])
 
 ### "ckeditor" directive
 
-- "ckeditor" Specify editor options. Accepts an Object.
-- "ng-model" Binded scope variable.
-- "ready" Called when the editor is completely ready. Accepts an Angular expression.
-- Inline editing mode is enabled if element has a `contenteditable` attribute set to true.
+- "ckeditor" editor options. Accepts an Object.
+- "ng-model" bound scope variable.
+- "ready" (optional) callback called when the editor is completely ready. Accepts an Angular expression.
+- "contenteditable" (optional) if set to true, inline editing mode is enabled
 
 **IMPORTANT NOTICE**
 Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom this directive is attached, changes in the editor won't be forwarded to your code anymore, due to the extra scope created by `ng-if`. A solution is to explicitely bypass the extra scope : `ng-model="$parent.model"`. See http://stackoverflow.com/questions/18342917/angularjs-ng-model-doesnt-work-inside-ng-if
@@ -66,9 +67,11 @@ Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom t
 ## See also
 You may find this other directive useful : https://github.com/lemonde/angular-ckeditor-placeholder
 
+
 ## License
 
 MIT
+
 
 ## Contributing
 * clone repo
