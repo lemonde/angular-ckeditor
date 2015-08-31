@@ -53,6 +53,19 @@ angular.module('controllers.ckeditor', ['ckeditor'])
 }]);
 ```
 
+## Advanced usage
+
+### getting internal ckeditor instance
+Internally, CKEditor gives a name to its instances, either **the id of the element it's on** or automatic name (editor1, editor2...). If you plan to look for your instances programmatically via `CKEditor.istances`, be sure to give them a unique id="..." (Beware of re-usable directives).
+
+In a directive on the same element, you can also use :
+```javascript
+link: function (scope, element) {
+  var ckeditorController = element.controller('ckeditor'); // angular-ckeditor controller
+  var ckeditorInstance = ckeditorController.instance;
+```
+
+
 ### "ckeditor" directive
 
 - "ckeditor" editor options. Accepts an Object.
