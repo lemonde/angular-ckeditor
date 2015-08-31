@@ -20,6 +20,8 @@ Note : obviously this plugin expects the presence of AngularJS and CKEditor.
 
 ## Usage
 
+### Example
+
 HTML:
 
 ```html
@@ -53,6 +55,17 @@ angular.module('controllers.ckeditor', ['ckeditor'])
 }]);
 ```
 
+### "ckeditor" directive
+
+- "ckeditor" editor options. Accepts an Object.
+- "ng-model" bound scope variable.
+- "ready" (optional) callback called when the editor is completely ready. Accepts an Angular expression.
+- "contenteditable" (optional) if set to true, inline editing mode is enabled
+
+**IMPORTANT NOTICE**
+Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom this directive is attached, changes in the editor won't be forwarded to your code anymore, due to the extra scope created by `ng-if`. A solution is to explicitely bypass the extra scope : `ng-model="$parent.model"`. See http://stackoverflow.com/questions/18342917/angularjs-ng-model-doesnt-work-inside-ng-if
+
+
 ## Advanced usage
 
 ### getting internal ckeditor instance
@@ -64,17 +77,6 @@ link: function (scope, element) {
   var ckeditorController = element.controller('ckeditor'); // angular-ckeditor controller
   var ckeditorInstance = ckeditorController.instance;
 ```
-
-
-### "ckeditor" directive
-
-- "ckeditor" editor options. Accepts an Object.
-- "ng-model" bound scope variable.
-- "ready" (optional) callback called when the editor is completely ready. Accepts an Angular expression.
-- "contenteditable" (optional) if set to true, inline editing mode is enabled
-
-**IMPORTANT NOTICE**
-Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom this directive is attached, changes in the editor won't be forwarded to your code anymore, due to the extra scope created by `ng-if`. A solution is to explicitely bypass the extra scope : `ng-model="$parent.model"`. See http://stackoverflow.com/questions/18342917/angularjs-ng-model-doesnt-work-inside-ng-if
 
 
 ## See also
