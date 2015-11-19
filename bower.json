@@ -1,7 +1,7 @@
 {
   "name": "angular-ckeditor",
   "main": "angular-ckeditor.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/lemonde/angular-ckeditor",
   "authors": [
     "Team Le8 <projet-cms-tech@lemonde.fr>"
