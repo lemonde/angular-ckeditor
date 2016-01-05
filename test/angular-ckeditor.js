@@ -1,4 +1,5 @@
 var expect = chai.expect;
+_.str = s; // clearer exposition of underscore.string
 
 describe('CKEditor directive', function () {
   var $compile, $document, $rootScope, scope;
