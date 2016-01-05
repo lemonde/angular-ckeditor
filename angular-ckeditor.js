@@ -3,16 +3,11 @@
   if (typeof define === 'function' && define.amd) define(['angular'], factory);
   // Global
   else factory(angular);
-}(this, function (angular) {
+} (this, function (angular) {
 
   angular
-  .module('ckeditor', [])
-  .directive('ckeditor', ['$parse', ckeditorDirective]);
-
-  // Polyfill setImmediate function.
-  var setImmediate = window && window.setImmediate ? window.setImmediate : function (fn) {
-    setTimeout(fn, 0);
-  };
+    .module('ckeditor', [])
+    .directive('ckeditor', ['$parse', ckeditorDirective]);
 
   /**
    * CKEditor directive.
@@ -47,15 +42,14 @@
             });
           });
 
-          controller.instance.setReadOnly(!! attrs.readonly);
+          controller.instance.setReadOnly(!!attrs.readonly);
           attrs.$observe('readonly', function (readonly) {
-            controller.instance.setReadOnly(!! readonly);
+            controller.instance.setReadOnly(!!readonly);
           });
 
-          // Defer the ready handler calling to ensure that the editor is
-          // completely ready and populated with data.
-          setImmediate(function () {
-            $parse(attrs.ready)(scope);
+          // Call evalAsync and pass the editor instance as parameter
+          scope.$evalAsync(function () {
+            $parse(attrs.ready)(scope, { editor: controller.instance });
           });
         });
 
@@ -81,7 +75,7 @@
 
     // Create editor instance.
     if (editorElement.hasAttribute('contenteditable') &&
-        editorElement.getAttribute('contenteditable').toLowerCase() == 'true') {
+      editorElement.getAttribute('contenteditable').toLowerCase() == 'true') {
       instance = this.instance = CKEDITOR.inline(editorElement, config);
     }
     else {
@@ -90,7 +84,7 @@
 
     /**
      * Listen on events of a given type.
-     * This make all event asynchronous and wrapped in $scope.$apply.
+     * This make all event asynchronous and wrapped in $scope.$evalAsync.
      *
      * @param {String} event
      * @param {Function} listener
@@ -102,14 +96,12 @@
 
       function asyncListener() {
         var args = arguments;
-        setImmediate(function () {
-          applyListener.apply(null, args);
-        });
+        applyListener.apply(null, args);
       }
 
       function applyListener() {
         var args = arguments;
-        $scope.$apply(function () {
+        $scope.$evalAsync(function () {
           listener.apply(null, args);
         });
       }
@@ -120,7 +112,7 @@
       };
     };
 
-    this.onCKEvent('instanceReady', function() {
+    this.onCKEvent('instanceReady', function () {
       readyDeferred.resolve(true);
     });
 
@@ -136,7 +128,7 @@
     // Destroy editor when the scope is destroyed.
     $scope.$on('$destroy', function onDestroy() {
       // do not delete too fast or pending events will throw errors
-      readyDeferred.promise.then(function() {
+      readyDeferred.promise.then(function () {
         instance.destroy(false);
       });
     });
