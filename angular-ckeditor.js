@@ -62,7 +62,13 @@
         // Set editor data when view data change.
         ngModelController.$render = function syncEditor() {
           controller.ready().then(function () {
-            controller.instance.setData(ngModelController.$viewValue || '');
+            controller.instance.setData(ngModelController.$viewValue || '', {
+              noSnapshot: true,
+              callback: function () {
+                //Amends the top of the undo stack with the current DOM changes
+                controller.instance.fire('updateSnapshot');
+              }
+            });
           });
         };
       }
