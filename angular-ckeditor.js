@@ -62,10 +62,13 @@
         // Set editor data when view data change.
         ngModelController.$render = function syncEditor() {
           controller.ready().then(function () {
+            // "noSnapshot" prevent recording an undo snapshot
             controller.instance.setData(ngModelController.$viewValue || '', {
               noSnapshot: true,
               callback: function () {
-                //Amends the top of the undo stack with the current DOM changes
+                // Amends the top of the undo stack with the current DOM changes
+                // ie: merge snapshot with the first empty one
+                // http://docs.ckeditor.com/#!/api/CKEDITOR.editor-event-updateSnapshot
                 controller.instance.fire('updateSnapshot');
               }
             });
