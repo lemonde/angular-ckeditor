@@ -16,7 +16,7 @@ describe('CKEditor directive', function () {
 
     createElement = function () {
       element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
+        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady($instance)"></div>'
       )(scope);
     };
   }));
@@ -61,8 +61,10 @@ describe('CKEditor directive', function () {
 
   it('should call the ready callback on start', function (done) {
     scope.content = 'Hello';
-    scope.onReady = done;
-
+    scope.onReady = function ($instance) {
+      expect($instance).to.deep.equal(_.find(CKEDITOR.instances));
+      done();
+    };
     createElement();
   });
 
