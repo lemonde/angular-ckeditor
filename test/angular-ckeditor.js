@@ -194,4 +194,41 @@ describe('CKEditor directive', function () {
       expect(_.find(CKEDITOR.instances).readOnly).to.be.false;
     });
   });
+
+  describe('pristine', function () {
+    beforeEach(function(done) {
+      scope.content = 'Hello';
+      scope.onReady = done;
+      var element = $compile(
+          '<div ng-form="aForm"><div contenteditable="true" ckeditor ng-readonly="readonly" ng-model="content" ready="onReady()"></div></div>'
+        )(scope);
+    })
+
+    it('should leave the form clean after initialisation', function (done) {
+      expect(scope.aForm.$pristine).to.be.true;
+
+      // Give CKEditor time to catch up then test still pristine.
+      setTimeout(function () {
+        expect(scope.aForm.$pristine).to.be.true;
+        done();
+      }, 5);
+    })
+
+    it('should mark the form dirty when setData is called', function (done) {
+      // Angular CKEditor may take a few setImmediate() to propagate values,
+      // so wait a small timeout before testing
+      setTimeout(function () {
+        expect(scope.aForm.$pristine).to.be.true;
+        expect(_.str.trim(scope.content)).to.equal('<p>Hello</p>');
+        _.find(CKEDITOR.instances).setData('<p>Stuff</p>');
+
+        setTimeout(function () {
+          expect(_.str.trim(scope.content)).to.equal('<p>Stuff</p>');
+          expect(scope.aForm.$pristine).to.be.false;
+          done();
+        }, 5);
+      }, 5);
+    })
+  })
 });
+

@@ -41,9 +41,26 @@
         // Initialize the editor content when it is ready.
         controller.ready().then(function initialize() {
           // Sync view on specific events.
-          ['dataReady', 'change', 'blur', 'saveSnapshot'].forEach(function (event) {
+
+          ['change', 'blur', 'saveSnapshot'].forEach(function (event) {
             controller.onCKEvent(event, function syncView() {
+                ngModelController.$setViewValue(controller.instance.getData() || '');
+            });
+          });
+          var firstTime = true;
+          ['dataReady'].forEach(function (event) {
+            controller.onCKEvent(event, function syncView() {
+              // First time only that we receive the dataReady event and the control is pristine it should remain so
+              firstTime &= ngModelController.$pristine;
+              if (firstTime) {
+                ngModelController.$pristine = false;  // Prevent the model change setting the form dirty.
+              }
               ngModelController.$setViewValue(controller.instance.getData() || '');
+              ngModelController.$commitViewValue();
+              if (firstTime) {
+                firstTime = false;
+                ngModelController.$pristine = true;
+              }
             });
           });
 
