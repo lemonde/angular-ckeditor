@@ -15,6 +15,12 @@ CKEditor directive for Angular.
 bower install angular-ckeditor
 ```
 
+### Using NPM
+
+```sh
+npm install angular-ckeditor
+```
+
 Note : obviously this plugin expects the presence of AngularJS and CKEditor.
 
 
