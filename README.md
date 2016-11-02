@@ -37,7 +37,7 @@ HTML:
 <script src="angular-ckeditor.js"></script>
 
 <div ng-controller="CkeditorCtrl">
-  <div ckeditor="options" ng-model="content" ready="onReady()"></div>
+  <div ckeditor="options" ng-model="content" ready="onReady($instance)"></div>
 </div>
 ```
 
@@ -55,7 +55,7 @@ angular.module('controllers.ckeditor', ['ckeditor'])
   };
 
   // Called when the editor is completely ready.
-  $scope.onReady = function () {
+  $scope.onReady = function ($instance) {
     // ...
   };
 }]);
@@ -76,6 +76,8 @@ Angular-ckeditor uses `ng-model`. If you add an `ng-if` on the element to whom t
 
 ### getting internal ckeditor instance
 Internally, CKEditor gives a name to its instances, either **the id of the element it's on** or automatic name (editor1, editor2...). If you plan to look for your instances programmatically via `CKEditor.istances`, be sure to give them a unique id="..." (Beware of re-usable directives).
+
+You can use the injected $instance that is passed into your ready function or
 
 In a directive on the same element, you can also use :
 ```javascript

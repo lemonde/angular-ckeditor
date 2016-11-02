@@ -41,7 +41,7 @@
         // Initialize the editor content when it is ready.
         controller.ready().then(function initialize() {
           // Sync view on specific events.
-          ['dataReady', 'change', 'blur', 'saveSnapshot'].forEach(function (event) {
+          ['dataReady', 'change', 'blur', 'saveSnapshot', 'selectionChange', 'paste'].forEach(function (event) {
             controller.onCKEvent(event, function syncView() {
               ngModelController.$setViewValue(controller.instance.getData() || '');
             });
@@ -55,7 +55,7 @@
           // Defer the ready handler calling to ensure that the editor is
           // completely ready and populated with data.
           setImmediate(function () {
-            $parse(attrs.ready)(scope);
+            $parse(attrs.ready)(scope, {$instance: controller.instance});
           });
         });
 
