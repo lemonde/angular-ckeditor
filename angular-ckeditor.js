@@ -125,7 +125,7 @@
 
       // Return the deregistration function
       return function $off() {
-        instance.removeListener(event, applyListener);
+        instance.removeListener(event, asyncListener);
       };
     };
 
