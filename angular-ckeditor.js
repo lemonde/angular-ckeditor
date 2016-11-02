@@ -43,7 +43,7 @@
           // Sync view on specific events.
           ['dataReady', 'change', 'blur', 'saveSnapshot'].forEach(function (event) {
             controller.onCKEvent(event, function syncView() {
-              ngModelController.$setViewValue(controller.instance.getData() || '');
+              setViewValueIfNeed(ngModelController, controller);
             });
           });
 
@@ -74,6 +74,14 @@
             });
           });
         };
+        var setViewValueIfNeed = function(ngModelController, controller) {
+            // do not create object in scope, if the model refers to an object.property
+            if (controller.instance.getData()) {
+              ngModelController.$setViewValue(controller.instance.getData());
+            } else if (ngModelController.$viewValue) {
+              ngModelController.$setViewValue('');
+            }
+        }
       }
     };
   }
