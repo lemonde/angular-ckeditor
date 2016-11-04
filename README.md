@@ -1,6 +1,7 @@
 # angular-ckeditor
 
 [![Build Status](https://travis-ci.org/lemonde/angular-ckeditor.svg?branch=master)](https://travis-ci.org/lemonde/angular-ckeditor)
+[![CDNJS](https://img.shields.io/cdnjs/v/angular-ckeditor.svg)](https://cdnjs.com/libraries/angular-ckeditor)
 [![Dependency Status](https://david-dm.org/lemonde/angular-ckeditor.svg?theme=shields.io)](https://david-dm.org/lemonde/angular-ckeditor)
 [![devDependency Status](https://david-dm.org/lemonde/angular-ckeditor/dev-status.svg?theme=shields.io)](https://david-dm.org/lemonde/angular-ckeditor#info=devDependencies)
 
