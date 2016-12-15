@@ -1,7 +1,10 @@
+'use strict';
+
 var expect = chai.expect;
+_.str = s; // clearer exposition of underscore.string
 
 describe('CKEditor directive', function () {
-  var $compile, $document, $rootScope, scope;
+  var $compile, $document, $rootScope, scope, createElement, element;
 
   beforeEach(module('ckeditor'));
 
@@ -10,6 +13,12 @@ describe('CKEditor directive', function () {
     $rootScope = $injector.get('$rootScope');
     $document = $injector.get('$document');
     scope = $rootScope.$new();
+
+    createElement = function () {
+      element = $compile(
+        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
+      )(scope);
+    };
   }));
 
   afterEach(function cleanup (done) {
@@ -29,9 +38,7 @@ describe('CKEditor directive', function () {
         done();
       };
 
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
+      createElement();
     });
 
     it('should put editor out of readonly mode when ready', function (done) {
@@ -39,10 +46,7 @@ describe('CKEditor directive', function () {
         expect(_.find(CKEDITOR.instances).readOnly).to.be.false;
         done();
       };
-
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
+      createElement();
     });
 
     it('should destroy instance on scope destroy', function (done) {
@@ -50,10 +54,7 @@ describe('CKEditor directive', function () {
         done();
       };
 
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
-
+      createElement();
       // this is tested in the afterEach "cleanup" above
     });
   });
@@ -62,9 +63,7 @@ describe('CKEditor directive', function () {
     scope.content = 'Hello';
     scope.onReady = done;
 
-    var element = $compile(
-      '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-    )(scope);
+    createElement();
   });
 
   describe('model sync', function() {
@@ -83,9 +82,7 @@ describe('CKEditor directive', function () {
         }, 0);
       };
 
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
+      createElement();
     });
 
     it('should synchronize editor to the view', function (done) {
@@ -100,9 +97,7 @@ describe('CKEditor directive', function () {
         }, 5);
       };
 
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
+      createElement();
     });
 
     it('should synchronize editor to the view at start', function (done) {
@@ -116,9 +111,19 @@ describe('CKEditor directive', function () {
       };
 
       scope.content = 'at start !';
-      var element = $compile(
-        '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-      )(scope);
+      createElement();
+    });
+
+    it('should contain only one snapshot at start', function (done) {
+      scope.onReady = function () {
+        setTimeout(function () {
+          expect(_.find(CKEDITOR.instances).undoManager.snapshots.length).to.equal(1);
+          done();
+        }, 5);
+      };
+
+      scope.content = 'at start !';
+      createElement();
     });
 
     it('should update model in a watchable way', function (done) {
@@ -133,10 +138,7 @@ describe('CKEditor directive', function () {
         _.find(CKEDITOR.instances).setData('<p>Hey</p>');
       };
 
-      var element =
-        $compile(
-          '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-        )(scope);
+      createElement();
     });
   });
 
@@ -149,9 +151,7 @@ describe('CKEditor directive', function () {
           done();
         };
 
-        var element = $compile(
-          '<div contenteditable="true" ckeditor ng-model="content" ready="onReady()"></div>'
-        )(scope);
+        createElement();
       });
     });
 

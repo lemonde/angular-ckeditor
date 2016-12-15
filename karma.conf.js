@@ -14,7 +14,6 @@ module.exports = function (config) {
     files: [
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
-      'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/ckeditor/ckeditor.js',
 
       {
@@ -24,8 +23,9 @@ module.exports = function (config) {
         served: true
       },
 
-      'node_modules/lodash/dist/lodash.js',
-      'node_modules/underscore.string/lib/underscore.string.js',
+      'bower_components/lodash/lodash.js',
+      'node_modules/underscore.string/dist/underscore.string.js',
+      'bower_components/angular-mocks/angular-mocks.js',
       'node_modules/chai/chai.js',
       'node_modules/chai-jquery/chai-jquery.js',
       'node_modules/sinon/pkg/sinon.js',
