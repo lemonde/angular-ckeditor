@@ -47,9 +47,9 @@
             });
           });
 
-          controller.instance.setReadOnly(!! attrs.readonly);
-          attrs.$observe('readonly', function (readonly) {
-            controller.instance.setReadOnly(!! readonly);
+          controller.instance.setReadOnly(!! $parse(attrs.ngDisabled)(scope));
+          scope.$watch(attrs.ngDisabled, function () {
+            controller.instance.setReadOnly(!! $parse(attrs.ngDisabled)(scope));
           });
 
           // Defer the ready handler calling to ensure that the editor is
